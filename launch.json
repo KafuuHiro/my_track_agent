@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "*.m": "matlab"
+       
+    },
+    "matlab.matlabpath": "D:/MATLAB_R2024b",
+    "matlab.mlintpath": "D:/MATLAB_R2024b/toolbox/matlab/codetools/mlint.m",
+    "matlab.linterEncoding": "utf-8",
+    "[matlab]": {
+        "files.encoding": "gb2312"
+    }
+}

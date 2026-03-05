@@ -1,0 +1,13 @@
+
+{
+    "files.associations": {
+        "*.m": "matlab"
+       
+    },
+    "matlab.matlabpath": "/Applications/MATLAB_R2025a.app",
+    "matlab.mlintpath": "/Applications/MATLAB_R2025a.app/bin/maca64/mlint",
+    "matlab.linterEncoding": "utf-8",
+    "[matlab]": {
+        "files.encoding": "gb2312"
+    }
+}
