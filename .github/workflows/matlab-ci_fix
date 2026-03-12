@@ -1,0 +1,58 @@
+name: MATLAB CI - Fixed
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # ✅ 提前启用 Node.js 24（消除警告）
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      MLM_LICENSE_TOKEN: ${{ secrets.MLM_LICENSE_TOKEN }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          release: R2024a
+          cache: true
+          # ✅ 按需添加工具箱
+          # products: Simulink Statistics_and_Machine_Learning_Toolbox
+
+      # 🔍 调试：显示环境信息
+      - name: Debug: Environment info
+        run: |
+          echo "Working directory: $(pwd)"
+          echo "Repository files:"
+          ls -la
+
+      # ✅ 修复：使用正确的参数名
+      - name: Run MATLAB tests
+        uses: matlab-actions/run-tests@v2
+        with:
+          source-folder: tests
+          test-results-junit: test-results.xml          # ✅ 正确参数
+          code-coverage-cobertura: coverage.xml
+          output-detail: detailed                        # ✅ 替代 verbose
+          logging-level: verbose
+
+      # 🔍 调试：检查生成的文件
+      - name: Debug: Check output files
+        if: always()
+        run: |
+          echo "=== Generated XML files ==="
+          find . -name "*.xml" -exec echo "Found: {}" \;
+
+      # ✅ 修复：条件上传 + 处理文件不存在的情况
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matlab-test-results-${{ github.run_number }}
+          path: |
+            test-results.xml
+            coverage.xml
+          if-no-files-found: warn  # ✅ 文件不存在时只警告，不失败
