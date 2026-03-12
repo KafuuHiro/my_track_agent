@@ -1,0 +1,50 @@
+name: MATLAB CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+# 允许写入权限（如果需要上传测试报告等）
+permissions:
+  contents: read
+
+jobs:
+  matlab-test:
+    name: Run MATLAB Tests
+    runs-on: ubuntu-latest  # 可选: windows-latest, macos-latest
+    
+    steps:
+      # 1. 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. 设置 MATLAB 环境
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          # 可选：指定 MATLAB 版本，默认是 latest
+          release: R2024a
+          # 可选：安装额外工具箱（用空格分隔）
+          products: >
+            Simulink
+            Statistics_and_Machine_Learning_Toolbox
+          # 可选：启用缓存加速（推荐）
+          cache: true
+
+      # 3. 运行 MATLAB 脚本
+      - name: Run my script
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            % 添加当前目录到路径
+            addpath(pwd);
+            % 运行你的主脚本
+            result = my_main_function();
+            % 输出结果用于调试
+            disp(['Test completed. Result: ', num2str(result)]);
+            % 如果有错误，退出非零状态码
+            if ~isnumeric(result) || isnan(result)
+              error('Test failed: invalid result');
+            end
